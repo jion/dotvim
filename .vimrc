@@ -8,7 +8,7 @@ filetype off
 call plug#begin('~/.vim/bundle')
 
 " Plug 'python-mode/python-mode'
-Plug 'Valloric/YouCompleteMe'
+" Plug 'Valloric/YouCompleteMe'
 Plug 'airblade/vim-gitgutter'
 Plug 'cakebaker/scss-syntax.vim'
 Plug 'cfsalguero/perl-go-to-def'
@@ -39,7 +39,24 @@ Plug 'wincent/command-t'
 Plug 'wting/gitsessions.vim'
 Plug 'xolox/vim-misc'
 Plug 'yegappan/mru'
+Plug 'zchee/deoplete-jedi'
 
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+
+" (Optional) Multi-entry selection UI.
+Plug 'junegunn/fzf'
+
+" Deoplete (Autocomplete)
+if has('nvim')
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+    Plug 'Shougo/deoplete.nvim'
+    Plug 'roxma/nvim-yarp'
+    Plug 'roxma/vim-hug-neovim-rpc'
+endif
 call plug#end()
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 syntax on
@@ -85,6 +102,7 @@ set smartcase
 let g:neomake_verbose=1
 let g:neomake_logfile='/tmp/s'
 
+let g:deoplete#enable_at_startup = 1
 let g:ycm_always_populate_location_list = 0 "default 0
 let g:ycm_auto_trigger=1
 let g:ycm_complete_in_strings = 1 "default 1
@@ -139,34 +157,12 @@ let g:session_autoload = 'yes'
 let g:session_autosave = 'yes'
 let g:session_default_to_last = 1
 
-" GO Remappings
-" Tests
-" nmap <silent> <leader>t :TestNearest<CR>
-" nmap <silent> <leader>T :TestFile<CR>
-" nmap <silent> <leader>a :TestSuite<CR>
-" nmap <silent> <leader>l :TestLast<CR>
-" nmap <silent> <leader>g :TestVisit<CR>
-
-" au FileType go nmap <Leader>s <Plug>(go-implements)
-" au FileType go nmap <Leader>gd <Plug>(go-doc)
-" au FileType go nmap <Leader>gv <Plug>(go-doc-vertical)
-" au FileType go nmap <leader>r <Plug>(go-run)
-" au FileType go nmap <leader>b <Plug>(go-build)
-" au FileType go nmap <leader>t <Plug>(go-test)
-" au FileType go nmap <leader>c <Plug>(go-coverage)
-" au FileType go nmap <Leader>dt <Plug>(go-def-tab)
-" au FileType go nmap <Leader>e <Plug>(go-rename)
-" au FileType go nmap <Leader>i <Plug>(go-info)
-
 au BufRead,BufNewFile *.md set filetype=markdown
 au BufRead,BufNewFile *.go set filetype=go
-"autocmd! BufWritePost * Neomake
 
-
-:let g:session_autosave = 'yes'
 " To speed up GitSessions
 set ssop-=options    " do not store global and local values in a session
-"set ssop-=folds      " do not store folds
+set ssop-=folds      " do not store folds
 
 let g:SignatureMarkerTextHLDynamic=1
 
@@ -228,11 +224,17 @@ map  <C-x>       <Esc>:bp\|bd #<CR>
 map  <Leader>n   :NERDTreeToggle<CR>
 nmap ,d :b#<bar>bd#<CR>
 
-" YouCompleteMe
-nnoremap <Leader>a    :YcmCompleter GoToDefinitionElseDeclaration<CR>
-nnoremap <Leader>s    :YcmCompleter GoToDeclaration<CR>
-nnoremap <Leader>d    :YcmCompleter GoToDefinition<CR>
+" " YouCompleteMe
+" nnoremap <Leader>a    :YcmCompleter GoToDefinitionElseDeclaration<CR>
+" nnoremap <Leader>s    :YcmCompleter GoToDeclaration<CR>
+" nnoremap <Leader>d    :YcmCompleter GoToDefinition<CR>
 " nnoremap <Leader>/    :YcmCompleter GoToInclude<CR>
+
+" Language Client
+nnoremap <F5> :call LanguageClient_contextMenu()<CR>
+nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
 
 " :w!! will write read only files not opened with sudo
 cmap w!! w !sudo tee % >/dev/null
@@ -332,3 +334,8 @@ set listchars=tab:▸\ ,eol:¬
 map <leader>l :set list!<CR> " Toggle tabs and EOL
 
 nnoremap <silent> <leader>fp :echo expand('%:p')<CR>
+
+
+let g:LanguageClient_serverCommands = {
+    \ 'python': ['/usr/local/bin/pyls'],
+    \ }
