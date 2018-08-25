@@ -183,7 +183,6 @@ set virtualedit=all
 
 " Whitespace
 set nowrap
-set textwidth=79
 set formatoptions=tcqrn1
 set tabstop=4
 set shiftwidth=4
@@ -234,6 +233,8 @@ nmap ,d :b#<bar>bd#<CR>
 nnoremap <F5> :call LanguageClient_contextMenu()<CR>
 nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+" nnoremap <silent> <leader>a :call LanguageClient#textDocument_implementation()<CR>
+nnoremap <silent> <leader>a :call LanguageClient#textDocument_definition()<CR>
 nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
 
 " :w!! will write read only files not opened with sudo
@@ -339,3 +340,29 @@ nnoremap <silent> <leader>fp :echo expand('%:p')<CR>
 let g:LanguageClient_serverCommands = {
     \ 'python': ['/usr/local/bin/pyls'],
     \ }
+
+" Relative numbers
+set number relativenumber
+
+augroup numbertoggle
+  autocmd!
+  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+augroup END
+
+" Toggle L/Q windows open/close
+function! ToggleQuickFix()
+    if exists("g:qwindow")
+        lclose
+        unlet g:qwindow
+    else
+        try
+            lopen 10
+            let g:qwindow = 1
+        catch
+            echo "No Errors found!"
+        endtry
+    endif
+endfunction
+
+nmap <script> <silent> <F2> :call ToggleQuickFix()<CR>
