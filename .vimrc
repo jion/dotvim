@@ -18,6 +18,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'cakebaker/scss-syntax.vim'
 Plug 'cfsalguero/perl-go-to-def'
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'elixir-editors/vim-elixir'
 Plug 'elzr/vim-json'
 Plug 'fatih/vim-go'
 Plug 'fisadev/vim-isort'
@@ -32,6 +33,7 @@ Plug 'mattn/emmet-vim'
 Plug 'pangloss/vim-javascript'
 Plug 'scrooloose/nerdtree'
 Plug 'scrooloose/syntastic'
+Plug 'slashmili/alchemist.vim'
 Plug 'ternjs/tern_for_vim'
 Plug 'tpope/tpope-vim-abolish'
 Plug 'tpope/vim-fugitive'
@@ -45,6 +47,7 @@ Plug 'wting/gitsessions.vim'
 Plug 'xolox/vim-misc'
 Plug 'yegappan/mru'
 Plug 'zchee/deoplete-jedi'
+Plug 'Xuyuanp/nerdtree-git-plugin'
 
 Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
@@ -64,6 +67,10 @@ else
 endif
 call plug#end()
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" dirty hack for elixir files
+" au BufRead,BufNewFile *.ex,*.exs set filetype=elixir
+" au BufRead,BufNewFile *.eex set filetype=eelixir
+
 syntax on
 filetype plugin indent on " required for plugins to load correctly
 
