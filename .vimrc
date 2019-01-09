@@ -10,11 +10,17 @@ if empty(glob('~/.vim/autoload/plug.vim'))
         \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
-call plug#begin('~/.vim/bundle')
+
+
+" Specify a directory for plugins
+" - For Neovim: ~/.local/share/nvim/plugged
+" - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('~/.local/share/nvim/plugged')
 
 " Plug 'python-mode/python-mode'
 " Plug 'Valloric/YouCompleteMe'
 Plug 'airblade/vim-gitgutter'
+Plug 'altercation/vim-colors-solarized'
 Plug 'cakebaker/scss-syntax.vim'
 Plug 'cfsalguero/perl-go-to-def'
 Plug 'ctrlpvim/ctrlp.vim'
@@ -46,7 +52,7 @@ Plug 'wincent/command-t'
 Plug 'wting/gitsessions.vim'
 Plug 'xolox/vim-misc'
 Plug 'yegappan/mru'
-Plug 'zchee/deoplete-jedi'
+" Plug 'zchee/deoplete-jedi'  " I'm using LanguageClient
 Plug 'Xuyuanp/nerdtree-git-plugin'
 
 Plug 'autozimu/LanguageClient-neovim', {
@@ -59,13 +65,17 @@ Plug 'junegunn/fzf'
 
 " Deoplete (Autocomplete)
 if has('nvim')
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 else
-    Plug 'Shougo/deoplete.nvim'
-    Plug 'roxma/nvim-yarp'
-    Plug 'roxma/vim-hug-neovim-rpc'
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
 endif
+let g:deoplete#enable_at_startup = 1
+
+" Initialize plugin system
 call plug#end()
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " dirty hack for elixir files
 " au BufRead,BufNewFile *.ex,*.exs set filetype=elixir
@@ -94,7 +104,7 @@ set ttyfast
 set scrolloff=3
 
 " Enable mouse use in normal mode
-set mouse=nv
+set mouse= "nv
 "
 " Set this to the name of your terminal that supports mouse codes.
 " Must be one of: xterm, xterm2, netterm, dec, jsbterm, pterm
@@ -114,21 +124,24 @@ set smartcase
 let g:neomake_verbose=1
 let g:neomake_logfile='/tmp/s'
 
-let g:deoplete#enable_at_startup = 1
-let g:ycm_always_populate_location_list = 0 "default 0
-let g:ycm_auto_trigger=1
-let g:ycm_complete_in_strings = 1 "default 1
-let g:ycm_enable_diagnostic_highlighting = 1
-let g:ycm_enable_diagnostic_signs = 1
-let g:ycm_key_invoke_completion = '<C-Space>'
-let g:ycm_min_num_of_chars_for_completion=3
-let g:ycm_open_loclist_on_ycm_diags = 1 "default 1
-let g:ycm_python_binary_path = 'python'
-let g:ycm_register_as_syntastic_checker = 1 "default 1
+" I'm not using YCM
+" let g:ycm_always_populate_location_list = 0 "default 0
+" let g:ycm_auto_trigger=1
+" let g:ycm_complete_in_strings = 1 "default 1
+" let g:ycm_enable_diagnostic_highlighting = 1
+" let g:ycm_enable_diagnostic_signs = 1
+" let g:ycm_key_invoke_completion = '<C-Space>'
+" let g:ycm_min_num_of_chars_for_completion=3
+" let g:ycm_open_loclist_on_ycm_diags = 1 "default 1
+" let g:ycm_python_binary_path = 'python'
+" let g:ycm_register_as_syntastic_checker = 1 "default 1
 
 let g:Show_diagnostics_ui = 1 "default 1
 
-let g:syntastic_mode_map = { 'mode': 'active', 'active_filetypes': [],'passive_filetypes': [] }
+let g:syntastic_mode_map = {
+    \ 'mode': 'active',
+    \ 'active_filetypes': [],
+    \ 'passive_filetypes': ['xml'] }
 let g:syntastic_auto_loc_list = 0
 let g:syntastic_go_checkers = ['gofmt', 'go', 'golint', 'govet', 'errcheck']
 let g:syntastic_enable_perl_checker = 1
@@ -182,7 +195,7 @@ set autoindent
 set backspace=2
 set cursorline
 set foldlevelstart=20
-set foldmethod=syntax
+set foldmethod=indent
 set hidden
 set history=150
 set hlsearch
@@ -333,7 +346,7 @@ nnoremap <silent> ]E :clast<CR>
 " Tagbar
 nmap <leader><Space> :TagbarToggle<CR>
 autocmd VimEnter * nested :call tagbar#autoopen(1)
-autocmd FileType * nested :call tagbar#autoopen(0)
+" autocmd FileType * nested :call tagbar#autoopen(0)
 
 " Python
 let g:python_highlight_all=1
@@ -354,13 +367,19 @@ let g:LanguageClient_serverCommands = {
     \ }
 
 " Relative numbers
-set number relativenumber
-
+set number
+set norelativenumber
 augroup numbertoggle
   autocmd!
-  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
-  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+  let buftype_blacklist = ['terminal', 'nofile']
+  autocmd BufEnter,WinEnter,FocusGained,InsertLeave * if index(buftype_blacklist, &buftype) < 0 | set relativenumber
+  autocmd BufLeave,WinNew,WinLeave,FocusLost,InsertEnter * if index(buftype_blacklist, &buftype) < 0 | set norelativenumber
+  " No relative numbers in terminal
+  autocmd BufWinEnter,WinEnter,TermOpen,FocusGained term://* setlocal norelativenumber
+  autocmd BufWinEnter,WinEnter,TermOpen,FocusGained term://* setlocal nonumber
+  autocmd BufWinEnter,WinEnter,TermOpen,FocusGained term://* setlocal signcolumn=no
 augroup END
+
 
 " Toggle L/Q windows open/close
 function! ToggleQuickFix()
@@ -378,3 +397,13 @@ function! ToggleQuickFix()
 endfunction
 
 nmap <script> <silent> <F2> :call ToggleQuickFix()<CR>
+
+" Folding
+nnoremap <space> za
+vnoremap <space> zf
+
+" System Clipboard
+vnoremap <C-c> "+y
+
+" Rye templates
+autocmd BufRead,BufNewFile /opt/pythonenv/v2_ordergroove-py27/templates/api/order_xml/* set syntax=htmldjango
