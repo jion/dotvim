@@ -19,6 +19,8 @@ call plug#begin('~/.local/share/nvim/plugged')
 
 " Plug 'python-mode/python-mode'
 " Plug 'Valloric/YouCompleteMe'
+" Plug 'zchee/deoplete-jedi'  " I'm using LanguageClient
+Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'airblade/vim-gitgutter'
 Plug 'altercation/vim-colors-solarized'
 Plug 'cakebaker/scss-syntax.vim'
@@ -29,13 +31,16 @@ Plug 'elzr/vim-json'
 Plug 'fatih/vim-go'
 Plug 'fisadev/vim-isort'
 Plug 'flazz/vim-colorschemes'
+Plug 'gabrielelana/vim-markdown'
 Plug 'gmarik/Vundle.vim'
 Plug 'isRuslan/vim-es6'
+Plug 'janko-m/vim-test'
 Plug 'janko-m/vim-test'
 Plug 'junegunn/goyo.vim'
 Plug 'kshenoy/vim-signature'
 Plug 'majutsushi/tagbar'
 Plug 'mattn/emmet-vim'
+Plug 'mgedmin/coverage-highlight.vim'
 Plug 'pangloss/vim-javascript'
 Plug 'scrooloose/nerdtree'
 Plug 'scrooloose/syntastic'
@@ -52,8 +57,6 @@ Plug 'wincent/command-t'
 Plug 'wting/gitsessions.vim'
 Plug 'xolox/vim-misc'
 Plug 'yegappan/mru'
-" Plug 'zchee/deoplete-jedi'  " I'm using LanguageClient
-Plug 'Xuyuanp/nerdtree-git-plugin'
 
 Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
@@ -359,7 +362,7 @@ set listchars=tab:▸\ ,eol:¬
 " Or use your leader key + l to toggle on/off
 map <leader>l :set list!<CR> " Toggle tabs and EOL
 
-nnoremap <silent> <leader>fp :echo expand('%:p')<CR>
+nnoremap <silent> <leader>f :echo expand('%:p')<CR>
 
 
 let g:LanguageClient_serverCommands = {
@@ -407,3 +410,13 @@ vnoremap <C-c> "+y
 
 " Rye templates
 autocmd BufRead,BufNewFile /opt/pythonenv/v2_ordergroove-py27/templates/api/order_xml/* set syntax=htmldjango
+
+" Coverage plugin options
+noremap [C :<C-U>PrevUncovered<CR>
+noremap ]C :<C-U>NextUncovered<CR>
+
+" Automatically remove trailing whitespaces on lines
+autocmd BufWritePre *.py %s/\s\+$//e
+
+" json-vim has the terrible idea to hide quotes by default
+let g:vim_json_syntax_conceal = 0
