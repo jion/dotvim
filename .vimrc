@@ -46,6 +46,7 @@ Plug 'vim-python/python-syntax'
 " Plug 'wincent/command-t'  " TODO: Why you need this if you have CTRL-P?
 Plug 'wting/gitsessions.vim'
 " Plug 'xolox/vim-misc'  " ??????
+" Plug 'zchee/deoplete-jedi'  " I'm using LanguageClient
 
 Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
@@ -63,7 +64,6 @@ else
   Plug 'roxma/nvim-yarp'
   Plug 'roxma/vim-hug-neovim-rpc'
 endif
-Plug 'zchee/deoplete-jedi'  " I'm using LanguageClient
 let g:deoplete#enable_at_startup = 1
 
 " Initialize plugin system
