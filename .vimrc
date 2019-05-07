@@ -239,7 +239,23 @@ set noshiftround
 
 set t_Co=256
 set termguicolors
-colorscheme afterglow
+colorscheme gruvbox
+let g:terminal_color_0  = '#151515'
+let g:terminal_color_1  = '#a53c23'
+let g:terminal_color_2  = '#7b9246'
+let g:terminal_color_3  = '#d3a04d'
+let g:terminal_color_4  = '#6c99bb'
+let g:terminal_color_5  = '#9f4e85'
+let g:terminal_color_6  = '#7dd6cf'
+let g:terminal_color_7  = '#d0d0d0'
+let g:terminal_color_8  = '#505050'
+let g:terminal_color_9  = '#a53c23'
+let g:terminal_color_10 = '#7b9246'
+let g:terminal_color_11 = '#d3a04d'
+let g:terminal_color_12 = '#547c99'
+let g:terminal_color_13 = '#9f4e85'
+let g:terminal_color_14 = '#7dd6cf'
+let g:terminal_color_15 = '#f5f5f5'
 
 
 map  <C-Down>    <Esc><C-w><Down>
@@ -256,12 +272,19 @@ nmap ,d :b#<bar>bd#<CR>
 nmap <Leader>c   :ToggleCoverage<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Language Client
+" LanguageClient
 nnoremap <F5> :call LanguageClient_contextMenu()<CR>
 nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> gs :call LanguageClient#textDocument_documentSymbol()<CR>
+" nnoremap ggs :call LanguageClient#workspace_symbol()<CR>
 nnoremap <silent> <leader>i :call LanguageClient#textDocument_implementation()<CR>
 nnoremap <silent> <leader>a :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> <leader>f :call LanguageClient#textDocument_formatting()<CR>
+vnoremap <silent> <leader>f :call LanguageClient#textDocument_rangeFormatting()<CR>
+nnoremap <silent> <leader>_ :call LanguageClient#textDocument_documentHighlight()<CR>
+nnoremap <silent> <leader>- :call LanguageClient#clearDocumentHighlight()<CR>
+nnoremap <silent> <leader>? :call LanguageClient#explainErrorAtPoint()<CR>
 nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
 
 " :w!! will write read only files not opened with sudo
