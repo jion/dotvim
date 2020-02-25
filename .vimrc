@@ -6,20 +6,16 @@ let g:python_host_prog = '/home/manuel/.pyenv/versions/neovim2/bin/python'
 let g:python3_host_prog = '/home/manuel/.pyenv/versions/neovim3/bin/python'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Plugins (using junegunn/vim-plug)
+" PLUGINS (using junegunn/vim-plug)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if empty(glob('~/.vim/autoload/plug.vim'))
     silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
         \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
-
-" Specify a directory for plugins
-" - For Neovim: ~/.local/share/nvim/plugged
-" - Avoid using standard Vim directory names like 'plugin'
 call plug#begin('~/.local/share/nvim/plugged')
 
-Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'airblade/vim-gitgutter'  " Shows a git diff in the gutter and stages/undoes hunks.
 " Plug 'altercation/vim-colors-solarized'
 Plug 'ctrlpvim/ctrlp.vim'  " Fuzzy file, buffer, mru, tag, etc finder.
@@ -30,33 +26,27 @@ Plug 'gabrielelana/vim-markdown'
 Plug 'janko-m/vim-test'  " A Vim wrapper for running tests on different granularities.
 Plug 'junegunn/goyo.vim'  " Distraction-free writing in Vim
 Plug 'kshenoy/vim-signature'  " Plugin to toggle, display and navigate marks
-" Plug 'majutsushi/tagbar'
 Plug 'mgedmin/coverage-highlight.vim'
 Plug 'pangloss/vim-javascript'
 Plug 'scrooloose/nerdtree'
-Plug 'scrooloose/syntastic'
+" Plug 'scrooloose/syntastic'  " using python language server for this
+Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-surround'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-python/python-syntax'
 " Plug 'wellle/targets.vim'  "TODO: Seems very similar to sorround.vim. Investigate
 " Plug 'wincent/command-t'  " TODO: Why you need this if you have CTRL-P?
 Plug 'wting/gitsessions.vim'
 " Plug 'xolox/vim-misc'  " ??????
-" Plug 'zchee/deoplete-jedi'  " I'm using LanguageClient
+Plug 'junegunn/fzf'             " Multi-entry selection UI.
 
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
-
-" (Optional) Multi-entry selection UI.
-Plug 'junegunn/fzf'
-
-" Deoplete (Autocomplete)
+" Plug 'davidhalter/jedi-vim'  " I think is not needed if using LanguageClient
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Deoplete (Autocomplete) """""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Used by LanguageClient instead of omnicompletion
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 else
@@ -65,6 +55,27 @@ else
   Plug 'roxma/vim-hug-neovim-rpc'
 endif
 let g:deoplete#enable_at_startup = 1
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+
+" Snippets
+Plug 'sirver/ultisnips'
+let g:UltiSnipsUsePythonVersion = 3
+let g:UltiSnipsExpandTrigger = '<tab>'
+let g:UltiSnipsJumpForwardTrigger = '<tab>'
+let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
+
+Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
+if !exists('g:started_by_firenvim')
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+    Plug 'enricobacis/vim-airline-clock'
+endif
+
 
 " Initialize plugin system
 call plug#end()
@@ -116,24 +127,24 @@ let g:go_fmt_command = "goimports"
 
 
 " Plugin: Syntastic
-let g:syntastic_mode_map = {
-    \ 'mode': 'active',
-    \ 'active_filetypes': [],
-    \ 'passive_filetypes': ['xml'] }
-let g:syntastic_auto_loc_list = 0
-let g:syntastic_go_checkers = ['gofmt', 'go', 'golint', 'govet', 'errcheck']
-let g:syntastic_enable_perl_checker = 1
-let g:syntastic_perl_checkers = ['perl', 'podchecker']
-let g:syntastic_python_checkers = ['pyflakes']
-" let g:syntastic_python_checkers = ['flake8']
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
+" let g:syntastic_mode_map = {
+"     \ 'mode': 'active',
+"     \ 'active_filetypes': [],
+"     \ 'passive_filetypes': ['xml'] }
+" let g:syntastic_auto_loc_list = 0
+" let g:syntastic_go_checkers = ['gofmt', 'go', 'golint', 'govet', 'errcheck']
+" let g:syntastic_enable_perl_checker = 1
+" let g:syntastic_perl_checkers = ['perl', 'podchecker']
+" let g:syntastic_python_checkers = ['pyflakes']
+" " let g:syntastic_python_checkers = ['flake8'] ", 'mypy']
+" set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%*
+" 
+" let g:syntastic_always_populate_loc_list = 1
+" let g:syntastic_auto_loc_list = 1
+" let g:syntastic_check_on_open = 1
+" let g:syntastic_check_on_wq = 0
 
 " Plugin: air-line
 let g:airline_theme = 'minimalist'
@@ -142,11 +153,13 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_buffers = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline#extensions#tabline#switch_buffers_and_tabs = 1
+let g:airline#extensions#tabline#tab_nr_type = 1
 
 " Plugin: NERDTree
 let NERDTreeQuitOnOpen = 1
-let NERDTreeIgnore = ['\.pyc$']
-map  <C-n>       :NERDTreeToggle<CR>
+let NERDTreeIgnore = ['\.pyc$', '\.egg-info$', '__pycache__', '__pycache__']
+map <C-n> :NERDTreeToggle<CR>
 "
 " Plugin: CTRLP
 " Lets improve ctrlp performance
@@ -166,10 +179,13 @@ let g:ctrlp_custom_ignore = {
 " control. It also supports works with .svn, .hg, .bzr.
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
+let g:ctrlp_switch_buffer='v'  " jump when <cr> is pressed, but only to windows
+                               " in the current tab, except <c-v> is pressed
 
 " Use a leader instead of the actual named binding
-nmap <leader><leader> :CtrlP<cr>
-nmap <leader>. :CtrlPLine<cr>
+nmap <leader><leader> :CtrlPBuffer<cr>
+" nmap <leader>. :CtrlPLine<cr>
+nmap <leader>. :CtrlPTag<cr>
 nmap <leader>m :CtrlPMRU<cr>
 
 " Easy bindings for its various modes
@@ -239,6 +255,7 @@ set noshiftround
 
 set t_Co=256
 set termguicolors
+set background=dark
 colorscheme gruvbox
 let g:terminal_color_0  = '#151515'
 let g:terminal_color_1  = '#a53c23'
@@ -267,6 +284,8 @@ map  <C-Up>      <Esc><C-w><Up>
 map  <leader>h   <Esc>:noh<CR>
 map  <C-j>       <Esc>:bprevious<CR>
 map  <C-k>       <Esc>:bnext<CR>
+map  <C-h>       <Esc>:tabp<CR>
+map  <C-l>       <Esc>:tabn<CR>
 map  <C-x>       <Esc>:bp\|bd #<CR>
 nmap ,d :b#<bar>bd#<CR>
 nmap <Leader>c   :ToggleCoverage<CR>
@@ -339,15 +358,12 @@ nnoremap <silent> ]e :cnext<CR>
 nnoremap <silent> [E :cfirst<CR>
 nnoremap <silent> ]E :clast<CR>
 
-" Tagbar
-" let g:tagbar_ctags_bin='/usr/local/bin/uctags'
-" nmap <leader><Space> :TagbarToggle<CR>
-" autocmd VimEnter * nested :call tagbar#autoopen(1)
-" autocmd FileType * nested :call tagbar#autoopen(0)
+" Swaping ; and : to fast access to colon commands
+nnoremap ; :
+"nnoremap : ;
 
-" Python
-let g:python_highlight_all=1
-" let g:loaded_python3_provider=1
+" Show me current buffer filename
+nnoremap <silent> <leader>f :echo expand('%:p')<CR>
 
 " Visualize tabs and newlines
 set listchars=tab:▸\ ,eol:¬
@@ -356,13 +372,28 @@ set listchars=tab:▸\ ,eol:¬
 " Or use your leader key + l to toggle on/off
 map <leader>l :set list!<CR> " Toggle tabs and EOL
 
-nnoremap <silent> <leader>f :echo expand('%:p')<CR>
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Python
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:python_version_2=1
+let g:python_highlight_all=1
+" let g:python_highlight_func_calls=0
+" let g:loaded_python3_provider=1
 
+" Coverage plugin options
+noremap [C :<C-U>PrevUncovered<CR>
+noremap ]C :<C-U>NextUncovered<CR>
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Language Client configuration
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"    \ 'python': ['docker-compose', 'run', '--rm', 'sc', 'python', '-m', 'pyls'],
+"    \ 'python': ['/home/manuel/.pyenv/shims/pyls'],
 let g:LanguageClient_serverCommands = {
-    \ 'python': ['/home/manuel/.pyenv/shims/pyls'],
+    \ 'python': ['/home/manuel/.pyenv/versions/pyls-dev/bin/pyls'],
     \ }
-let g:LanguageClient_useVirtualText = 0
+let g:LanguageClient_useVirtualText = "No"
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Relative numbers
 set number
@@ -382,11 +413,11 @@ augroup END
 " Toggle L/Q windows open/close
 function! ToggleQuickFix()
     if exists("g:qwindow")
-        lclose
+        cclose
         unlet g:qwindow
     else
         try
-            lopen 10
+            copen 10
             let g:qwindow = 1
         catch
             echo "No Errors found!"
@@ -406,10 +437,6 @@ vnoremap <C-c> "+y
 " Rye templates
 autocmd BufRead,BufNewFile /opt/pythonenv/v2_ordergroove-py27/templates/api/order_xml/* set syntax=htmldjango
 
-" Coverage plugin options
-noremap [C :<C-U>PrevUncovered<CR>
-noremap ]C :<C-U>NextUncovered<CR>
-
 " Automatically remove trailing whitespaces on lines
 autocmd BufWritePre *.py %s/\s\+$//e
 
@@ -418,6 +445,17 @@ let g:vim_json_syntax_conceal = 0
 
 nnoremap <leader>b oimport ipdb; ipdb.set_trace()<ESC>
 
-"" TODO: Move this
-let g:python_highlight_all = 1
-let g:python_version_2 = 1
+"" Spelling corrections
+setlocal spell
+set spelllang=en_us
+inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
+autocmd BufRead,BufNewFile *.json set nospell
+
+" Count number of matches of last search
+"   (https://vim.fandom.com/wiki/Count_number_of_matches_of_a_pattern)
+map ,* *<C-O>:%s///gn<CR>
+
+" Search in visual mode
+vnoremap // y/\V<C-r>=escape(@",'/\')<CR><CR>
+
+set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
