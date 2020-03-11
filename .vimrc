@@ -39,10 +39,8 @@ Plug 'vim-python/python-syntax'
 " Plug 'wellle/targets.vim'  "TODO: Seems very similar to sorround.vim. Investigate
 " Plug 'wincent/command-t'  " TODO: Why you need this if you have CTRL-P?
 Plug 'wting/gitsessions.vim'
-" Plug 'xolox/vim-misc'  " ??????
 Plug 'junegunn/fzf'             " Multi-entry selection UI.
-
-" Plug 'davidhalter/jedi-vim'  " I think is not needed if using LanguageClient
+"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Deoplete (Autocomplete) """""""""""""""""""""""""""""""""""""""""""""""""""""
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -75,7 +73,6 @@ if !exists('g:started_by_firenvim')
     Plug 'vim-airline/vim-airline-themes'
     Plug 'enricobacis/vim-airline-clock'
 endif
-
 
 " Initialize plugin system
 call plug#end()
@@ -116,7 +113,7 @@ set smartcase
 let g:neomake_verbose=1
 let g:neomake_logfile='/tmp/s'
 
-
+"" GO Language
 let g:go_fmt_fail_silently = 1
 let g:go_fmt_autosave = 1
 let g:go_highlight_functions = 1
@@ -160,8 +157,10 @@ let g:airline#extensions#tabline#tab_nr_type = 1
 let NERDTreeQuitOnOpen = 1
 let NERDTreeIgnore = ['\.pyc$', '\.egg-info$', '__pycache__', '__pycache__']
 map <C-n> :NERDTreeToggle<CR>
-"
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Plugin: CTRLP
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Lets improve ctrlp performance
 let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
 if executable('ag')
@@ -175,8 +174,6 @@ let g:ctrlp_custom_ignore = {
 \}
 
 " Use the nearest .git directory as the cwd
-" This makes a lot of sense if you are working on a project that is in version
-" control. It also supports works with .svn, .hg, .bzr.
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
 let g:ctrlp_switch_buffer='v'  " jump when <cr> is pressed, but only to windows
@@ -192,6 +189,7 @@ nmap <leader>m :CtrlPMRU<cr>
 " nmap <leader>bb :CtrlPBuffer<cr>
 " nmap <leader>bm :CtrlPMixed<cr>
 " nmap <leader>bt :CtrlPTag<cr>
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
 "
@@ -390,7 +388,7 @@ noremap ]C :<C-U>NextUncovered<CR>
 "    \ 'python': ['docker-compose', 'run', '--rm', 'sc', 'python', '-m', 'pyls'],
 "    \ 'python': ['/home/manuel/.pyenv/shims/pyls'],
 let g:LanguageClient_serverCommands = {
-    \ 'python': ['/home/manuel/.pyenv/versions/pyls-dev/bin/pyls'],
+    \ 'python': ['/home/manuel/.pyenv/versions/pyls-27/bin/pyls'],
     \ }
 let g:LanguageClient_useVirtualText = "No"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
