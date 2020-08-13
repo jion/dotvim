@@ -16,24 +16,25 @@ endif
 
 call plug#begin('~/.local/share/nvim/plugged')
 
-Plug 'airblade/vim-gitgutter'  " Shows a git diff in the gutter and stages/undoes hunks.
+Plug 'tpope/vim-sensible'       " Universal set of defaults that (hopefully) everyone can agree on.
+Plug 'airblade/vim-gitgutter'   " Shows a git diff in the gutter and stages/undoes hunks.
 " Plug 'altercation/vim-colors-solarized'
-Plug 'ctrlpvim/ctrlp.vim'  " Fuzzy file, buffer, mru, tag, etc finder.
-Plug 'elzr/vim-json'   " A better JSON for Vim: distinct highlighting of keywords vs values, JSON-specific (non-JS) warnings, quote concealing.
-Plug 'fisadev/vim-isort'  " pip install isort -- Intelligent import sorting
+Plug 'ctrlpvim/ctrlp.vim'       " Fuzzy file, buffer, mru, tag, etc finder.
+Plug 'elzr/vim-json'            " A better JSON for Vim: distinct highlighting of keywords vs values, JSON-specific (non-JS) warnings, quote concealing.
+Plug 'fisadev/vim-isort'        " pip install isort -- Intelligent import sorting
 Plug 'flazz/vim-colorschemes'
 Plug 'gabrielelana/vim-markdown'
-Plug 'janko-m/vim-test'  " A Vim wrapper for running tests on different granularities.
-Plug 'junegunn/goyo.vim'  " Distraction-free writing in Vim
-Plug 'kshenoy/vim-signature'  " Plugin to toggle, display and navigate marks
+Plug 'janko-m/vim-test'         " A Vim wrapper for running tests on different granularities.
+Plug 'junegunn/goyo.vim'        " Distraction-free writing in Vim
+Plug 'kshenoy/vim-signature'    " Plugin to toggle, display and navigate marks
 Plug 'mgedmin/coverage-highlight.vim'
-Plug 'pangloss/vim-javascript'
+Plug 'pangloss/vim-javascript'  " Because sometimes you need to get dirty
 Plug 'scrooloose/nerdtree'
-" Plug 'scrooloose/syntastic'  " using python language server for this
 Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'scrooloose/syntastic'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-rhubarb'
+Plug 'tpope/vim-rhubarb'        " Integration with GitHub
 Plug 'tpope/vim-surround'
 Plug 'vim-python/python-syntax'
 " Plug 'wellle/targets.vim'  "TODO: Seems very similar to sorround.vim. Investigate
@@ -124,24 +125,24 @@ let g:go_fmt_command = "goimports"
 
 
 " Plugin: Syntastic
-" let g:syntastic_mode_map = {
-"     \ 'mode': 'active',
-"     \ 'active_filetypes': [],
-"     \ 'passive_filetypes': ['xml'] }
-" let g:syntastic_auto_loc_list = 0
-" let g:syntastic_go_checkers = ['gofmt', 'go', 'golint', 'govet', 'errcheck']
-" let g:syntastic_enable_perl_checker = 1
-" let g:syntastic_perl_checkers = ['perl', 'podchecker']
-" let g:syntastic_python_checkers = ['pyflakes']
-" " let g:syntastic_python_checkers = ['flake8'] ", 'mypy']
-" set statusline+=%#warningmsg#
-" set statusline+=%{SyntasticStatuslineFlag()}
-" set statusline+=%*
-" 
-" let g:syntastic_always_populate_loc_list = 1
-" let g:syntastic_auto_loc_list = 1
-" let g:syntastic_check_on_open = 1
-" let g:syntastic_check_on_wq = 0
+let g:syntastic_mode_map = {
+    \ 'mode': 'active',
+    \ 'active_filetypes': [],
+    \ 'passive_filetypes': ['xml'] }
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_go_checkers = ['gofmt', 'go', 'golint', 'govet', 'errcheck']
+let g:syntastic_enable_perl_checker = 1
+let g:syntastic_perl_checkers = ['perl', 'podchecker']
+let g:syntastic_python_checkers = ['pyflakes']
+" let g:syntastic_python_checkers = ['flake8'] ", 'mypy']
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
 
 " Plugin: air-line
 let g:airline_theme = 'minimalist'
@@ -301,8 +302,11 @@ nnoremap <silent> <leader>f :call LanguageClient#textDocument_formatting()<CR>
 vnoremap <silent> <leader>f :call LanguageClient#textDocument_rangeFormatting()<CR>
 nnoremap <silent> <leader>_ :call LanguageClient#textDocument_documentHighlight()<CR>
 nnoremap <silent> <leader>- :call LanguageClient#clearDocumentHighlight()<CR>
-nnoremap <silent> <leader>? :call LanguageClient#explainErrorAtPoint()<CR>
+" nnoremap <silent> <leader>? :call LanguageClient#explainErrorAtPoint()<CR>
 nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+
+" Git blame at line
+nmap <silent><Leader>? :call setbufvar(winbufnr(popup_atcursor(systemlist("cd " . shellescape(fnamemodify(resolve(expand('%:p')), ":h")) . " && git log --no-merges -n 1 -L " . shellescape(line("v") . "," . line(".") . ":" . resolve(expand("%:p")))), { "padding": [1,1,1,1], "pos": "botleft", "wrap": 0 })), "&filetype", "git")<CR>
 
 " :w!! will write read only files not opened with sudo
 cmap w!! w !sudo tee % >/dev/null
@@ -313,7 +317,9 @@ if has("autocmd")
 endif
 
 if exists('+colorcolumn')
-  set colorcolumn=80
+  set colorcolumn=80,120
+  " highlight ColorColumn ctermbg=magenta
+  " call matchadd('ColorColumn', '\%81v', 100)
 else
   au BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
 endif
@@ -387,25 +393,44 @@ noremap ]C :<C-U>NextUncovered<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "    \ 'python': ['docker-compose', 'run', '--rm', 'sc', 'python', '-m', 'pyls'],
 "    \ 'python': ['/home/manuel/.pyenv/shims/pyls'],
+"    \ 'python': ['/home/manuel/.pyenv/versions/pyls-27/bin/pyls'],
 let g:LanguageClient_serverCommands = {
-    \ 'python': ['/home/manuel/.pyenv/versions/pyls-27/bin/pyls'],
+    \ 'python': ['/home/manuel/.pyenv/shims/pyls'],
     \ }
 let g:LanguageClient_useVirtualText = "No"
+
+function SetLSPShortcuts()
+  nnoremap <leader>ld :call LanguageClient#textDocument_definition()<CR>
+  nnoremap <leader>lr :call LanguageClient#textDocument_rename()<CR>
+  nnoremap <leader>lf :call LanguageClient#textDocument_formatting()<CR>
+  nnoremap <leader>lt :call LanguageClient#textDocument_typeDefinition()<CR>
+  nnoremap <leader>lx :call LanguageClient#textDocument_references()<CR>
+  nnoremap <leader>la :call LanguageClient_workspace_applyEdit()<CR>
+  nnoremap <leader>lc :call LanguageClient#textDocument_completion()<CR>
+  nnoremap <leader>lh :call LanguageClient#textDocument_hover()<CR>
+  nnoremap <leader>ls :call LanguageClient_textDocument_documentSymbol()<CR>
+  nnoremap <leader>lm :call LanguageClient_contextMenu()<CR>
+endfunction()
+
+augroup LSP
+  autocmd!
+  autocmd FileType cpp,c,py call SetLSPShortcuts()
+augroup END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Relative numbers
 set number
-set norelativenumber
-augroup numbertoggle
-  autocmd!
-  let buftype_blacklist = ['terminal', 'nofile']
-  autocmd BufEnter,WinEnter,FocusGained,InsertLeave * if index(buftype_blacklist, &buftype) < 0 | set relativenumber
-  autocmd BufLeave,WinNew,WinLeave,FocusLost,InsertEnter * if index(buftype_blacklist, &buftype) < 0 | set norelativenumber
-  " No relative numbers in terminal
-  autocmd BufWinEnter,WinEnter,TermOpen,FocusGained term://* setlocal norelativenumber
-  autocmd BufWinEnter,WinEnter,TermOpen,FocusGained term://* setlocal nonumber
-  autocmd BufWinEnter,WinEnter,TermOpen,FocusGained term://* setlocal signcolumn=no
-augroup END
+" set norelativenumber
+" augroup numbertoggle
+"   autocmd!
+"   let buftype_blacklist = ['terminal', 'nofile']
+"   autocmd BufEnter,WinEnter,FocusGained,InsertLeave * if index(buftype_blacklist, &buftype) < 0 | set relativenumber
+"   autocmd BufLeave,WinNew,WinLeave,FocusLost,InsertEnter * if index(buftype_blacklist, &buftype) < 0 | set norelativenumber
+"   " No relative numbers in terminal
+"   autocmd BufWinEnter,WinEnter,TermOpen,FocusGained term://* setlocal norelativenumber
+"   autocmd BufWinEnter,WinEnter,TermOpen,FocusGained term://* setlocal nonumber
+"   autocmd BufWinEnter,WinEnter,TermOpen,FocusGained term://* setlocal signcolumn=no
+" augroup END
 
 
 " Toggle L/Q windows open/close
@@ -457,3 +482,9 @@ map ,* *<C-O>:%s///gn<CR>
 vnoremap // y/\V<C-r>=escape(@",'/\')<CR><CR>
 
 set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
+
+" Moving lines around
+nmap <M-k> :m-2<CR>
+nmap <M-j> :m+<CR>
+vmap <M-k> :m-2<CR>
+vmap <M-j> :m'>+<CR>
