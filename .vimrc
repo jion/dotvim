@@ -35,12 +35,16 @@ Plug 'scrooloose/syntastic'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'        " Integration with GitHub
+Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 Plug 'vim-python/python-syntax'
 " Plug 'wellle/targets.vim'  "TODO: Seems very similar to sorround.vim. Investigate
 " Plug 'wincent/command-t'  " TODO: Why you need this if you have CTRL-P?
+Plug 'wincent/loupe'
 Plug 'wting/gitsessions.vim'
 Plug 'junegunn/fzf'             " Multi-entry selection UI.
+" Plug 'embark-theme/vim', { 'as': 'embark' }
+" Plug 'statox/FYT.vim'
 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Deoplete (Autocomplete) """""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -255,23 +259,24 @@ set noshiftround
 set t_Co=256
 set termguicolors
 set background=dark
+" colorscheme embark
 colorscheme gruvbox
-let g:terminal_color_0  = '#151515'
-let g:terminal_color_1  = '#a53c23'
-let g:terminal_color_2  = '#7b9246'
-let g:terminal_color_3  = '#d3a04d'
-let g:terminal_color_4  = '#6c99bb'
-let g:terminal_color_5  = '#9f4e85'
-let g:terminal_color_6  = '#7dd6cf'
-let g:terminal_color_7  = '#d0d0d0'
-let g:terminal_color_8  = '#505050'
-let g:terminal_color_9  = '#a53c23'
-let g:terminal_color_10 = '#7b9246'
-let g:terminal_color_11 = '#d3a04d'
-let g:terminal_color_12 = '#547c99'
-let g:terminal_color_13 = '#9f4e85'
-let g:terminal_color_14 = '#7dd6cf'
-let g:terminal_color_15 = '#f5f5f5'
+" let g:terminal_color_0  = '#151515'
+" let g:terminal_color_1  = '#a53c23'
+" let g:terminal_color_2  = '#7b9246'
+" let g:terminal_color_3  = '#d3a04d'
+" let g:terminal_color_4  = '#6c99bb'
+" let g:terminal_color_5  = '#9f4e85'
+" let g:terminal_color_6  = '#7dd6cf'
+" let g:terminal_color_7  = '#d0d0d0'
+" let g:terminal_color_8  = '#505050'
+" let g:terminal_color_9  = '#a53c23'
+" let g:terminal_color_10 = '#7b9246'
+" let g:terminal_color_11 = '#d3a04d'
+" let g:terminal_color_12 = '#547c99'
+" let g:terminal_color_13 = '#9f4e85'
+" let g:terminal_color_14 = '#7dd6cf'
+" let g:terminal_color_15 = '#f5f5f5'
 
 
 map  <C-Down>    <Esc><C-w><Down>
@@ -394,10 +399,14 @@ noremap ]C :<C-U>NextUncovered<CR>
 "    \ 'python': ['docker-compose', 'run', '--rm', 'sc', 'python', '-m', 'pyls'],
 "    \ 'python': ['/home/manuel/.pyenv/shims/pyls'],
 "    \ 'python': ['/home/manuel/.pyenv/versions/pyls-27/bin/pyls'],
+let g:LanguageClient_loggingFile =  expand('~/.local/share/nvim/LanguageClient.log')
+let g:LanguageClient_serverStderr = expand('~/.local/share/nvim/LanguageServer.log')
 let g:LanguageClient_serverCommands = {
     \ 'python': ['/home/manuel/.pyenv/shims/pyls'],
+    \ 'javascript': ['/home/manuel/.nvm/versions/node/v14.8.0/bin/node', '/home/manuel/dev/language-servers/javascript-typescript-langserver/lib/language-server-stdio'],
     \ }
 let g:LanguageClient_useVirtualText = "No"
+let g:LanguageClient_settingsPath = '/home/manuel/dev/dotvim/.vim/settings.json'
 
 function SetLSPShortcuts()
   nnoremap <leader>ld :call LanguageClient#textDocument_definition()<CR>
@@ -420,17 +429,17 @@ augroup END
 
 " Relative numbers
 set number
-" set norelativenumber
-" augroup numbertoggle
-"   autocmd!
-"   let buftype_blacklist = ['terminal', 'nofile']
-"   autocmd BufEnter,WinEnter,FocusGained,InsertLeave * if index(buftype_blacklist, &buftype) < 0 | set relativenumber
-"   autocmd BufLeave,WinNew,WinLeave,FocusLost,InsertEnter * if index(buftype_blacklist, &buftype) < 0 | set norelativenumber
-"   " No relative numbers in terminal
-"   autocmd BufWinEnter,WinEnter,TermOpen,FocusGained term://* setlocal norelativenumber
-"   autocmd BufWinEnter,WinEnter,TermOpen,FocusGained term://* setlocal nonumber
-"   autocmd BufWinEnter,WinEnter,TermOpen,FocusGained term://* setlocal signcolumn=no
-" augroup END
+set norelativenumber
+augroup numbertoggle
+  autocmd!
+  let buftype_blacklist = ['terminal', 'nofile']
+  autocmd BufEnter,WinEnter,FocusGained,InsertLeave * if index(buftype_blacklist, &buftype) < 0 | set relativenumber
+  autocmd BufLeave,WinNew,WinLeave,FocusLost,InsertEnter * if index(buftype_blacklist, &buftype) < 0 | set norelativenumber
+  " No relative numbers in terminal
+  autocmd BufWinEnter,WinEnter,TermOpen,FocusGained term://* setlocal norelativenumber
+  autocmd BufWinEnter,WinEnter,TermOpen,FocusGained term://* setlocal nonumber
+  autocmd BufWinEnter,WinEnter,TermOpen,FocusGained term://* setlocal signcolumn=no
+augroup END
 
 
 " Toggle L/Q windows open/close
@@ -488,3 +497,7 @@ nmap <M-k> :m-2<CR>
 nmap <M-j> :m+<CR>
 vmap <M-k> :m-2<CR>
 vmap <M-j> :m'>+<CR>
+
+" add yaml stuffs
+au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml foldmethod=indent
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
